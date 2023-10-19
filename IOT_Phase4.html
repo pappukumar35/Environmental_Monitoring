@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Monitoring Platform</title>
+    <!-- <link rel="stylesheet" href="style..css"> -->
+</head>
+<script src="https://cdn.socket.io/socket.io-4.0.1.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('update', (data) => {
+    document.getElementById('temperature').textContent = data.temperature + '°C';
+    document.getElementById('humidity').textContent = data.humidity + '%';
+  });
+</script>
+
+<style>
+   feDisplacementMap{
+    border-color: aqua;
+
+   }
+   display{
+    color-body:green;
+   }
+    
+   
+   
+
+
+    body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.data-container {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  margin: 0 auto;
+}
+
+</style>
+<body>
+    
+   
+    
+    <!-- <button type="button" class="btn btn-link">Link</button> -->
+    <div class="container">
+        <h1>Real-time Environmental Data</h1>
+        <div class="data">
+            <p>Temperature: <span id="temperature">--</span>°C</p>
+            <p>Humidity: <span id="humidity">--</span>%</p>
+        </div>
+    </div>
+    <!-- <script src="script.js"></script> -->
+    <script>
+        // Node.js server to receive data from IoT devices
+    const express = require('express');
+    const app = express();
+    const http = require('http').Server(app);
+    const io = require('socket.io')(http);
+    
+    // Create an array to store real-time data
+    const data = { temperature: 0, humidity: 0 };
+    
+    io.on('connection', (socket) => {
+      // Send the latest data to the client on connection
+      socket.emit('update', data);
+    });
+    
+    // Listen to incoming data from IoT devices and update the data
+    app.post('/update', (req, res) => {
+      data.temperature = req.body.temperature;
+      data.humidity = req.body.humidity;
+    
+      // Send the updated data to all connected clients
+      io.emit('update', data);
+      res.status(200).send('Data updated');
+    });
+    
+    http.listen(3000, () => {
+      console.log('Server listening on port 3000');
+    });
+    
+    </script>
+</body>
+</html>
+
